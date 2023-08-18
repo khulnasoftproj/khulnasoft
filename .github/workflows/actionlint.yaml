@@ -9,7 +9,7 @@ on:
       - khulnasoft/imports/reviewdog.yaml
 jobs:
   actionlint:
-    uses: sulaiman-coder/actionlint-workflow/.github/workflows/actionlint.yaml@b6a5f966d4504893b2aeb60cf2b0de8946e48504 # v0.5.0
+    uses: suzuki-shunsuke/actionlint-workflow/.github/workflows/actionlint.yaml@b6a5f966d4504893b2aeb60cf2b0de8946e48504 # v0.5.0
     with:
       khulnasoft_version: v2.10.1
       khulnasoft_policy_allow: true
