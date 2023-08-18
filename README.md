@@ -1,7 +1,3 @@
-<p align="center" width="100%">
-<img src="./logo/khulnasoft_horizontal.svg" width="400">
-</p>
-
 #
 
 [![Build Status](https://github.com/khulnasoftproj/khulnasoft/workflows/test/badge.svg)](https://github.com/khulnasoftproj/khulnasoft/actions)

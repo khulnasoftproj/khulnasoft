@@ -9,8 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions: {}
     steps:
-      - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
-      - uses: khulnasoftproj/khulnasoft-installer@36dc5833b04eb63f06e3bb818aa6b7a6e6db99a9 # v2.1.2
+      - uses: actions/checkout@v3 # v3.5.3
+      - uses: khulnasoftproj/khulnasoft-installer@v2.1.2 # v2.1.2
         with:
           khulnasoft_version: v2.10.1
         env:
