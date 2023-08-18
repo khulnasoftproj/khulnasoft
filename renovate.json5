@@ -1,0 +1,47 @@
+{
+  extends: [
+    "config:base",
+    "github>sulaiman-coder/renovate-config#2.1.0",
+    "github>khulnasoftproj/khulnasoft-renovate-config#1.8.0",
+    "github>sulaiman-coder/renovate-config:nolimit#2.1.0",
+    "github>khulnasoftproj/khulnasoft-renovate-config:file#1.8.0(tests/khulnasoft.*\\.yaml)",
+    "github>sulaiman-coder/renovate-config:action-go-version#2.1.0",
+    "github>khulnasoftproj/khulnasoft-renovate-config:file#1.8.0(khulnasoft/imports/.*\\.ya?ml)",
+    "github>khulnasoftproj/khulnasoft-renovate-config:installer-script#1.8.0(Dockerfile-prebuilt)"
+  ],
+  ignorePaths: [],
+  regexManagers: [
+    {
+      fileMatch: [".*\\.go"],
+      depNameTemplate: "khulnasoftproj/khulnasoft-proxy",
+      datasourceTemplate: "github-releases",
+      matchStrings: [
+        '"(?<currentValue>.*)" // renovate: depName=khulnasoftproj/khulnasoft-proxy',
+      ],
+    },
+    {
+      fileMatch: [".*\\.go"],
+      depNameTemplate: "khulnasoftproj/khulnasoft-registry",
+      datasourceTemplate: "github-releases",
+      matchStrings: [
+        '"(?<currentValue>.*)",? // renovate: depName=khulnasoftproj/khulnasoft-registry',
+      ],
+    },
+    {
+      fileMatch: ["^pkg/cosign/version\\.go"],
+      depNameTemplate: "sigstore/cosign",
+      datasourceTemplate: "github-releases",
+      matchStrings: [
+        'const Version = "(?<currentValue>.*)"',
+      ],
+    },
+    {
+      fileMatch: ["^pkg/slsa/version\\.go"],
+      depNameTemplate: "slsa-framework/slsa-verifier",
+      datasourceTemplate: "github-releases",
+      matchStrings: [
+        'const Version = "(?<currentValue>.*)"',
+      ],
+    },
+  ],
+}

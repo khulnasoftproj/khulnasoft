@@ -1,0 +1,11 @@
+registries:
+  - name: local
+    type: local
+    path: registry.yaml
+packages:
+  - name: 99designs/aws-vault@v7.2.0
+    # DMG https://github.com/khulnasoftproj/khulnasoft/issues/1706
+    registry: local
+  - name: bep/s3deploy@v2.11.0
+    # PKG https://github.com/khulnasoftproj/khulnasoft/issues/1803
+    registry: local

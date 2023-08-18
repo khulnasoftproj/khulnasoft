@@ -1,0 +1,154 @@
+packages:
+  - type: github_release
+    repo_owner: kubernetes-sigs
+    repo_name: kustomize
+    asset: 'kustomize_{{trimPrefix "kustomize/" .Version}}_{{.OS}}_{{.Arch}}.tar.gz'
+    version_filter: 'Version startsWith "kustomize/"'
+    version_constraint: 'semverWithVersion(">= 4.2.0", trimPrefix(Version, "kustomize/"))'
+    version_overrides:
+      - version_constraint: 'semverWithVersion("< 4.2.0", trimPrefix(Version, "kustomize/"))'
+        rosetta2: true
+
+  - type: github_content # github_content package
+    repo_owner: khulnasoftproj
+    repo_name: khulnasoft-installer
+    path: khulnasoft-installer
+
+  - type: github_archive # github_archive package
+    repo_owner: tfutils
+    repo_name: tfenv
+    files:
+    - name: tfenv
+      src: tfenv-{{trimV .Version}}/bin/tfenv
+    - name: terraform
+      src: tfenv-{{trimV .Version}}/bin/terraform
+
+  - type: go_install
+    path: github.com/anqiansong/github-compare
+    description: A GitHub repositories statistics command-line tool for the terminal
+
+  - type: go_install
+    # ignore duplicate package
+    path: github.com/anqiansong/github-compare
+
+  - type: go_install
+    repo_owner: katbyte
+    repo_name: terrafmt
+    description: Format terraform blocks embedded in files
+
+  - type: go_install
+    description: invalid package
+
+  # unknown package type
+  - type: foo
+    name: foo
+    name: foo # duplicated key
+
+  - type: http
+    repo_owner: helm
+    repo_name: helm
+    url: https://get.helm.sh/helm-{{.Version}}-{{.OS}}-{{.Arch}}.tar.gz
+    description: The Kubernetes Package Manager
+    files:
+      - name: helm
+        src: "{{.OS}}-{{.Arch}}/helm"
+    supported_envs:
+      - darwin
+      - linux
+      - amd64
+    checksum:
+      type: http
+      url: "{{.AssetURL}}.sha256sum"
+      file_format: regexp
+      algorithm: sha256
+      pattern:
+        checksum: ^(\b[A-Fa-f0-9]{64}\b)
+        file: "^\\b[A-Fa-f0-9]{64}\\b\\s+(\\S+)$"
+
+  - type: github_release
+    repo_owner: tamasfe
+    repo_name: taplo
+    version_constraint: semver(">= 0.8.0")
+    asset: taplo-{{.OS}}-{{.Arch}}.{{.Format}}
+    replacements:
+      amd64: x86_64
+      arm64: aarch64
+    supported_envs:
+      - darwin
+      - linux
+      - windows/amd64
+    format: gz
+    files:
+      - name: taplo
+        src: taplo-{{.OS}}-{{.Arch}}
+    overrides:
+      - goos: windows
+        format: zip
+        files:
+          - name: taplo
+            src: taplo.exe
+    version_overrides:
+      - version_constraint: "true"
+        version_prefix: release-taplo-cli-
+        asset: taplo-{{.Arch}}-{{.OS}}-gnu.{{.Format}}
+        rosetta2: true
+        format: tar.gz
+        supported_envs:
+          - darwin
+          - linux/amd64
+        replacements:
+          amd64: x86_64
+          darwin: apple-darwin
+          linux: unknown-linux
+        overrides: []
+        files:
+          - name: taplo
+      - version_constraint: semver(">= 0.6.0")
+        version_prefix: release-cli-
+        asset: taplo-{{.SemVer}}-{{.Arch}}-{{.OS}}-gnu.{{.Format}}
+        rosetta2: true
+        format: tar.gz
+        supported_envs:
+          - darwin
+          - linux/amd64
+        replacements:
+          amd64: x86_64
+          darwin: apple-darwin
+          linux: unknown-linux
+        overrides: []
+        files:
+          - name: taplo
+      - version_constraint: "true"
+        version_prefix: release-cli-
+        asset: taplo-{{.Arch}}-{{.OS}}-gnu.{{.Format}}
+        format: tar.gz
+        rosetta2: true
+        replacements:
+          amd64: x86_64
+          darwin: apple-darwin
+          linux: unknown-linux
+          windows: pc-windows
+        files:
+          - name: taplo
+        overrides:
+          - goos: windows
+            format: zip
+        supported_envs:
+          - darwin
+          - amd64
+
+  - name: crates.io/skim
+    type: cargo
+    repo_owner: lotabout
+    repo_name: skim
+    crate: skim
+    files:
+      - name: sk
+
+  - type: go_build
+    repo_owner: sulaiman-coder
+    repo_name: github-comment
+    files:
+      - name: github-comment
+        src: ./cmd/github-comment
+        dir: github-comment-{{trimV .Version}}

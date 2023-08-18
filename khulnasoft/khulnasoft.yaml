@@ -1,0 +1,11 @@
+---
+# khulnasoft - Declarative CLI Version Manager
+# https://khulnasoftproj.github.io/
+checksum:
+  enabled: true
+  require_checksum: true
+registries:
+  - type: standard
+    ref: v4.40.0 # renovate: depName=khulnasoftproj/khulnasoft-registry
+packages:
+  - import: imports/*.yaml

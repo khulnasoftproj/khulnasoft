@@ -1,0 +1,11 @@
+---
+name: test-docker-prebuilt
+on: workflow_call
+jobs:
+  test-docker:
+    # Test Dockerfile
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
+      - run: docker build -t khulnasoftproj-khulnasoft-dev -f Dockerfile-prebuilt .

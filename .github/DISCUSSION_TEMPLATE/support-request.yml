@@ -1,0 +1,107 @@
+title: Support Request
+body:
+  - type: textarea
+    id: khulnasoft-info
+    attributes:
+      label: khulnasoft info
+      description: |
+        Please use the latest version.
+        Please run `khulnasoft info` command and paste the result.
+        `khulnasoft info` requires `khulnasoft >= v2.10.0`.
+        If you use `khulnasoft < v2.10.0`, please run `khulnasoft -v` and write OS and CPU architecture instead.
+        If you checked multiple versions, please write the result too.
+        e.g. This issue occurs with khulnasoft v2.5.0 too, but doesn't occur with khulnasoft v2.4.0.
+      value: |
+        ```console
+        $ khulnasoft info
+
+        ```
+
+        #### khulnasoft < v2.10.0
+
+        ```console
+        $ khulnasoft -v
+
+        ```
+
+        OS (Windows, Linux, macOS, etc):
+        CPU Architecture (amd64, arm64, etc):
+
+    validations:
+      required: true
+
+  - type: textarea
+    id: overview
+    attributes:
+      label: Overview
+      value:
+    validations:
+      required: true
+  - type: textarea
+    id: how-to-reproduce
+    attributes:
+      label: How to reproduce
+      description: |
+        Please see [the guide](https://github.com/sulaiman-coder/oss-contribution-guide#write-good-how-to-reproduce) too.
+        khulnasoft.yaml should be not partial but complete configuration.
+        Please remove unneeded configuration to reproduce the issue.
+      value: |
+        khulnasoft.yaml
+
+        ```yaml
+
+        ```
+
+        Other related code such as local Registry
+
+        ```
+
+        ```
+
+        Executed command and output
+
+        ```console
+        $ 
+        ```
+    validations:
+      required: true
+  - type: textarea
+    id: debug-output
+    attributes:
+      label: Debug output
+      description: Please set the environment variable `KHULNASOFT_LOG_LEVEL=debug` and run khulnasoft and tell us the debug output.
+      value: |
+        ```console
+        $ 
+        ```
+    validations:
+      required: false
+  - type: textarea
+    id: expected-behaviour
+    attributes:
+      label: Expected behaviour
+      value:
+    validations:
+      required: true
+  - type: textarea
+    id: actual-behaviour
+    attributes:
+      label: Actual behaviour
+      value:
+    validations:
+      required: true
+  - type: textarea
+    id: important-factoid
+    attributes:
+      label: Important Factoids
+      value:
+    validations:
+      required: false
+  - type: textarea
+    id: reference
+    attributes:
+      label: Reference
+      value: |
+        *
+    validations:
+      required: false

@@ -1,0 +1,86 @@
+---
+# the configuration file of cmdx - task runner
+# https://github.com/sulaiman-coder/cmdx
+tasks:
+- name: test
+  short: t
+  description: test
+  usage: test
+  script: go test ./... -race -covermode=atomic
+- name: vet
+  short: v
+  description: go vet
+  usage: go vet
+  script: go vet ./...
+- name: lint
+  short: l
+  description: lint the go code
+  usage: lint the go code
+  script: golangci-lint run
+- name: release
+  short: r
+  description: release the new version
+  usage: release the new version
+  script: |
+    set -eux
+    git tag -m "chore: release {{.version}}" "{{.version}}"
+    git push origin "{{.version}}"
+  args:
+  - name: version
+    required: true
+    validate:
+    - regexp: "^v\\d+\\.\\d+.\\d+(-.+)?$"
+- name: build
+  description: go build
+  usage: go build
+  script: go build -o dist/khulnasoft ./cmd/khulnasoft
+- name: coverage
+  short: c
+  description: coverage test
+  usage: coverage test
+  script: "bash scripts/coverage.sh {{.target}}"
+  args:
+  - name: target
+- name: wire
+  short: w
+  description: google/wire
+  usage: google/wire
+  script: "wire ./..."
+- name: js
+  description: Generate JSON Schema
+  usage: Generate JSON Schema
+  script: "go run ./cmd/gen-jsonschema"
+- name: validate-js
+  description: Validate khulnasoft.yaml and registry.yaml with JSON Schema
+  usage: Validate khulnasoft.yaml and registry.yaml with JSON Schema
+  # https://ajv.js.org/packages/ajv-cli.html
+  script: |
+    set -eux
+    ajv --spec=draft2020 -s json-schema/khulnasoft-yaml.json -d khulnasoft.yaml
+    ajv --spec=draft2020 -s json-schema/registry.json -d tests/main/registry.yaml
+- name: install
+  short: i
+  description: Build and install khulnasoft
+  usage: Build and install khulnasoft by "go install" command
+  script: go install ./cmd/khulnasoft
+- name: run
+  description: Run khulnasoft via go run
+  usage: Run khulnasoft via go run
+  script: |
+    go run ./cmd/khulnasoft {{._builtin.args_string}}
+- name: docker
+  description: |
+    Build and run a new container and attach a pseudo-TTY.
+    You can test khulnasoft in a clean environment.
+  usage: Test khulnasoft in a clean container
+  script: |
+    set -eux
+    {{if .latest}}
+    bash scripts/docker.sh latest
+    {{else}}
+    bash scripts/docker.sh
+    {{end}}
+  flags:
+  - name: latest
+    short: l
+    type: bool

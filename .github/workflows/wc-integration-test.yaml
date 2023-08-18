@@ -1,0 +1,148 @@
+---
+name: integration-test
+on: workflow_call
+jobs:
+  integration-test:
+    runs-on: ubuntu-latest
+    permissions: {}
+    env:
+      GITHUB_TOKEN: ${{github.token}}
+      KHULNASOFT_LOG_LEVEL: debug
+      KHULNASOFT_LOG_COLOR: always
+      KHULNASOFT_GLOBAL_CONFIG: ${{ github.workspace }}/tests/main/khulnasoft-global.yaml:${{ github.workspace }}/tests/main/khulnasoft-global-2.yaml
+    steps:
+      - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
+      - uses: actions/setup-go@93397bea11091df50f3d7e59dc26a7711a8bcfbe # v4.1.0
+        with:
+          go-version: 1.21.0
+          cache: true
+
+      - run: go install ./cmd/khulnasoft
+      - run: echo "${XDG_DATA_HOME:-$HOME/.local/share}/khulnasoftproj-khulnasoft/bin" >> "$GITHUB_PATH"
+      - run: khulnasoft policy allow
+      - run: echo "standard,kubernetes-sigs/kind" | khulnasoft g -f -
+      - run: echo "x-motemen/ghq" | khulnasoft g -f -
+      - run: echo "local,khulnasoftproj/khulnasoft-installer" | khulnasoft -c tests/main/khulnasoft-global.yaml g -f -
+      - run: khulnasoft g x-motemen/ghq khulnasoftproj/khulnasoft-installer
+      - run: echo cli/cli | khulnasoft g -f - x-motemen/ghq khulnasoftproj/khulnasoft-installer sulaiman-coder/tfcmt@v3.0.0
+      - name: Test -pin
+        run: khulnasoft g --pin cli/cli sulaiman-coder/tfcmt@v2.0.0
+
+      - name: Test version_prefix
+        run: khulnasoft -c khulnasoft.yaml g -i kubernetes-sigs/kustomize
+        working-directory: tests/main
+
+      - run: khulnasoft list
+      - run: khulnasoft update-checksum
+        working-directory: tests/main
+      - run: khulnasoft update-checksum -prune
+        working-directory: tests/main
+      - run: khulnasoft i -l -a
+        working-directory: tests/main
+      - run: khulnasoft i
+        working-directory: tests/main
+      - run: khulnasoft which go
+      - run: kind version
+        working-directory: tests/main
+      - run: kind version
+      - run: restic version
+        env:
+          KHULNASOFT_PROGRESS_BAR: "true"
+      - run: migrate -version
+      - run: ghq -version
+      - run: gh version
+      - run: tfenv --version
+      - run: khulnasoft -c tests/main/khulnasoft-global.yaml g local,kubernetes-sigs/kustomize
+      - run: bats -v
+      - run: helm version
+      - run: github-compare -v
+      - run: terrafmt version
+
+      - name: Test the package type "cargo"
+        run: sk --version
+      - name: Test search versions of the package type "cargo"
+        run: khulnasoft -c tests/main/khulnasoft-global.yaml g local,crates.io/skim
+      - name: Test khulnasoft gr cargo
+        run: khulnasoft gr crates.io/skim
+
+      - name: test cosign
+        run: khulnasoft i
+        working-directory: tests/cosign
+
+      - name: test SLSA
+        run: khulnasoft i
+        working-directory: tests/slsa
+
+      - name: output bash completion
+        run: khulnasoft completion bash
+      - name: output zsh completion
+        run: khulnasoft completion zsh
+
+      - run: khulnasoft g -i sulaiman-coder/tfcmt
+        working-directory: tests/main
+      - name: add duplicated package
+        run: khulnasoft g -i sulaiman-coder/tfcmt
+        working-directory: tests/main
+      - run: git diff khulnasoft.yaml
+        working-directory: tests/main
+
+      - name: "Test generate-registry"
+        run: khulnasoft gr cli/cli
+      - name: "Test generate-registry (emoji)"
+        run: khulnasoft gr hmarr/codeowners
+      - name: "Test generate-registry (rust)"
+        run: khulnasoft gr XAMPPRocky/tokei
+      - name: Test generate-registry (specify version)
+        run: khulnasoft gr sulaiman-coder/tfcmt@v3.2.4
+
+      - name: test khulnasoft cp
+        run: khulnasoft cp actionlint
+      - name: test khulnasoft cp
+        run: dist/actionlint -version
+      - name: test khulnasoft cp
+        run: khulnasoft cp
+      - name: test khulnasoft cp -a
+        run: khulnasoft cp -a
+
+      - name: test tags
+        run: khulnasoft i
+        working-directory: tests/tag
+      - name: test tags
+        run: khulnasoft i -t test
+        working-directory: tests/tag
+      - name: test tags
+        run: khulnasoft i -t foo,bar
+        working-directory: tests/tag
+      - name: test tags
+        run: khulnasoft i --exclude-tags test
+        working-directory: tests/tag
+      - name: test tags
+        run: khulnasoft i --exclude-tags test -t foo
+        working-directory: tests/tag
+
+      - name: test tags
+        run: khulnasoft cp
+        working-directory: tests/tag
+      - name: test tags
+        run: khulnasoft cp -t test
+        working-directory: tests/tag
+      - name: test tags
+        run: khulnasoft cp -t foo,bar
+        working-directory: tests/tag
+      - name: test tags
+        run: khulnasoft cp --exclude-tags test
+        working-directory: tests/tag
+      - name: test tags
+        run: khulnasoft cp --exclude-tags test -t foo
+        working-directory: tests/tag
+
+      - run: khulnasoft update-checksum -a
+
+      # Test if global configuration files are read in `khulnasoft list` and `khulnasoft g`
+      - run: khulnasoft list
+        working-directory: /tmp
+
+      - name: Test update-khulnasoft
+        run: khulnasoft update-khulnasoft
+
+      - run: khulnasoft-installer -v v0.8.1 -i /tmp/khulnasoft

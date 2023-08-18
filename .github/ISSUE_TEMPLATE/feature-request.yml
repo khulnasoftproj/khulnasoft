@@ -1,0 +1,104 @@
+name: Feature Request
+description: If you want to add a feature.
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## :warning: Please create a GitHub Discussion instead of GitHub Issue
+
+        https://github.com/orgs/khulnasoftproj/discussions
+
+        Only maintainers can create new Issues. If needed, a maintainer will create an Issue after your Discussion been triaged and confirmed.
+        This way we keep Issues actionable, and free of duplicates or wrong bug reports.
+
+  - type: textarea
+    id: feature-overview
+    attributes:
+      label: Feature Overview
+      value:
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why is the feature needed?
+      description: Please explain the problem you want to solve.
+    validations:
+      required: true
+
+  - type: textarea
+    id: how-to-reproduce
+    attributes:
+      label: How to reproduce the issue
+      description: |
+        If you propose this to solve an issue, please explain how to reproduce the issue.
+        Please see [the guide](https://github.com/sulaiman-coder/oss-contribution-guide#write-good-how-to-reproduce) too.
+        khulnasoft.yaml should be not partial but complete configuration.
+        Please remove unneeded configuration to reproduce the issue.
+      value: |
+        :warning: `khulnasoft info` requires `khulnasoft >= v2.10.0`.
+
+        ```console
+        $ khulnasoft info
+
+        ```
+
+        khulnasoft.yaml
+
+        ```yaml
+
+        ```
+
+        Other related code such as local Registry.
+
+        ```
+
+        ```
+
+        Command and output.
+
+        ```console
+        $ 
+        ```
+
+        #### Expected behavour
+
+        #### Actual behavour
+        
+        #### What's the problem of actual behaviour?
+
+  - type: textarea
+    id: workaround
+    attributes:
+      label: Workaround
+      description: |
+        If you have any workaround, please explain it and why the workaround isn't enough.
+
+  - type: textarea
+    id: example-code
+    attributes:
+      label: Example Code
+      description: |
+        Please explain the feature with code. For example, if you want a new subcommand, please explain the usage of the subcommand.
+      value: |
+        ```console
+        $ 
+        ```
+
+        Configuration
+
+        ```yaml
+
+        ```
+    validations:
+      required: false
+  - type: textarea
+    id: reference
+    attributes:
+      label: Reference
+      value: |
+        *
+    validations:
+      required: false

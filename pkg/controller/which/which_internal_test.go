@@ -1,0 +1,92 @@
+package which
+
+import (
+	"path/filepath"
+	"testing"
+
+	"github.com/google/go-cmp/cmp"
+	"github.com/khulnasoftproj/khulnasoft/v2/pkg/config"
+	"github.com/khulnasoftproj/khulnasoft/v2/pkg/config/khulnasoft"
+	"github.com/khulnasoftproj/khulnasoft/v2/pkg/config/registry"
+	"github.com/khulnasoftproj/khulnasoft/v2/pkg/runtime"
+	"github.com/khulnasoftproj/khulnasoft/v2/pkg/util"
+	"github.com/sirupsen/logrus"
+)
+
+func TestController_findExecFileFromPkg(t *testing.T) { //nolint:funlen
+	t.Parallel()
+	data := []struct {
+		title      string
+		registries map[string]*registry.Config
+		exeName    string
+		pkg        *khulnasoft.Package
+		expWhich   *FindResult
+	}{
+		{
+			title:   "normal",
+			exeName: "kubectl",
+			pkg: &khulnasoft.Package{
+				Registry: "standard",
+				Name:     "kubernetes/kubectl",
+				Version:  "v1.21.0",
+			},
+			expWhich: &FindResult{
+				Package: &config.Package{
+					Package: &khulnasoft.Package{
+						Registry: "standard",
+						Name:     "kubernetes/kubectl",
+						Version:  "v1.21.0",
+					},
+					PackageInfo: &registry.PackageInfo{
+						Type: "http",
+						Name: "kubernetes/kubectl",
+						URL:  util.StrP("https://storage.googleapis.com/kubernetes-release/release/{{.Version}}/bin/{{.OS}}/{{.Arch}}/kubectl"),
+						Files: []*registry.File{
+							{
+								Name: "kubectl",
+							},
+						},
+					},
+				},
+				File: &registry.File{
+					Name: "kubectl",
+				},
+				ExePath: filepath.Join("/home", "foo", ".local", "share", "khulnasoftproj-khulnasoft", "pkgs", "http", "storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kubectl/kubectl"),
+			},
+			registries: map[string]*registry.Config{
+				"standard": {
+					PackageInfos: registry.PackageInfos{
+						&registry.PackageInfo{
+							Type: "http",
+							Name: "kubernetes/kubectl",
+							URL:  util.StrP("https://storage.googleapis.com/kubernetes-release/release/{{.Version}}/bin/{{.OS}}/{{.Arch}}/kubectl"),
+							Files: []*registry.File{
+								{
+									Name: "kubectl",
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+	ctrl := &ControllerImpl{
+		runtime: &runtime.Runtime{
+			GOOS:   "linux",
+			GOARCH: "amd64",
+		},
+		rootDir: filepath.Join("/home", "foo", ".local", "share", "khulnasoftproj-khulnasoft"),
+	}
+	logE := logrus.NewEntry(logrus.New())
+	for _, d := range data {
+		d := d
+		t.Run(d.title, func(t *testing.T) {
+			t.Parallel()
+			which := ctrl.findExecFileFromPkg(d.registries, d.exeName, d.pkg, logE)
+			if diff := cmp.Diff(d.expWhich, which); diff != "" {
+				t.Fatal(diff)
+			}
+		})
+	}
+}
